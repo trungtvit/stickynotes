@@ -6,8 +6,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.stickynotes.activity.MainActivity;
-
 /**
  * Created by TrungTV on 03/08/2017.
  */
