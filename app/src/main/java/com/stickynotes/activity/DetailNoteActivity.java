@@ -1,5 +1,6 @@
 package com.stickynotes.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,15 +8,18 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.stickynotes.R;
 import com.stickynotes.adapter.BackgroundAdapter;
+import com.stickynotes.application.CommonApplication;
 import com.stickynotes.database.DatabaseHandler;
 import com.stickynotes.model.RecyclerTouchListener;
 import com.stickynotes.model.StickyNote;
@@ -52,13 +56,19 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
     private int degreesPosition = 0;
     private int pinPosition = 1;
     private int backgroundPosition = 0;
+    private String contentNote = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_note);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(getResources().getString(R.string.note_title));
+
         application = (CommonApplication) getApplication();
         db = new DatabaseHandler(this);
+        backgroundAdapter = new BackgroundAdapter(application.listBackground);
+
         id = getIntent().getIntExtra("ID", -1);
 
         initUI();
@@ -67,11 +77,11 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
             showNoteDetail(id);
         }
 
-        backgroundAdapter = new BackgroundAdapter(application.listBackground);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rcvBackground.setLayoutManager(mLayoutManager);
         rcvBackground.setItemAnimator(new DefaultItemAnimator());
         rcvBackground.setAdapter(backgroundAdapter);
+        rcvBackground.scrollToPosition(backgroundPosition);
 
         rcvBackground.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), rcvBackground, new RecyclerTouchListener.ClickListener() {
             @Override
@@ -189,7 +199,14 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
                 imgRotate.setImageResource(application.rotate[degreesPosition]);
                 break;
             case R.id.imgSave:
-                addNoteToDB();
+                if (id == -1) {
+                    addNote();
+                    Toast.makeText(this, getResources().getString(R.string.msg_add_complete), Toast.LENGTH_SHORT).show();
+                } else {
+                    updateNote();
+                    Toast.makeText(this, getResources().getString(R.string.msg_update_complete), Toast.LENGTH_SHORT).show();
+                }
+                finish();
                 break;
             default:
                 /*TODO*/
@@ -197,6 +214,18 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /*Show detail note*/
     private void showNoteDetail(int id) {
         StickyNote note = db.getNoteByNoteId(id);
         pinPosition = note.getPin();
@@ -205,17 +234,13 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
         colorPosition = note.getTextColor();
         backgroundPosition = note.getBackground();
         degreesPosition = note.getRotate();
+        contentNote = note.getContent();
 
-//        if(pinPosition==0){
-//            imgPin.setImageBitmap(null);
-//        }else if(pinPosition == 1){
-//            imgPin.setImageResource(R.drawable.holder_2);
-//        }else if(pinPosition == 2){
-//            imgPin.setImageResource(R.drawable.holder_3);
-//        }
+        edtEditor.setText(contentNote);
+
         imgPin.setImageResource(application.listPin[pinPosition]);
 
-        edtEditor.setTextSize(application.listTextSize[textSizePosition]);
+        edtEditor.setTextSize(application.textSize[textSizePosition]);
         imgTextSize.setImageResource(application.listTextSize[textSizePosition]);
 
         imgAlign.setImageResource(application.listAlign[alignPosition]);
@@ -236,10 +261,12 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
         imgRotate.setImageResource(application.rotate[degreesPosition]);
 
         edtEditor.setBackgroundResource(application.listBackground[backgroundPosition]);
+        backgroundAdapter.setSelectedItem(backgroundPosition);
 
     }
 
-    private void addNoteToDB() {
+    /*Add note*/
+    private void addNote() {
         StickyNote note = new StickyNote();
         note.setContent(edtEditor.getText().toString());
         note.setTextSize(textSizePosition);
@@ -249,5 +276,20 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
         note.setBackground(backgroundPosition);
         note.setPin(pinPosition);
         db.addNote(note);
+    }
+
+    /*Update note*/
+    private void updateNote() {
+        StickyNote note = new StickyNote();
+        note.setContent(edtEditor.getText().toString());
+        note.setTextSize(textSizePosition);
+        note.setTextAlign(alignPosition);
+        note.setTextColor(colorPosition);
+        note.setRotate(degreesPosition);
+        note.setBackground(backgroundPosition);
+        note.setPin(pinPosition);
+        db.updateNote(note, id);
+        Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
     }
 }

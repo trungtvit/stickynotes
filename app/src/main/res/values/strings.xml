@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">StickyNotes</string>
+    <string name="note_title">Ghi chú</string>
+    <string name="list_note_title">Danh sách ghi chú</string>
+    <string name="msg_add_complete">Đã lưu thành công</string>
+    <string name="msg_update_complete">Đã cập nhật thành công</string>
 </resources>

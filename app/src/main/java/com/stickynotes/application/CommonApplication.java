@@ -1,4 +1,4 @@
-package com.stickynotes.activity;
+package com.stickynotes.application;
 
 import android.app.Application;
 

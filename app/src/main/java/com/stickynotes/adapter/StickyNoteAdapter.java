@@ -1,6 +1,5 @@
 package com.stickynotes.adapter;
 
-import android.app.Application;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.Gravity;
@@ -8,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.stickynotes.R;
-import com.stickynotes.activity.CommonApplication;
+import com.stickynotes.application.CommonApplication;
 import com.stickynotes.model.StickyNote;
 
 import java.util.List;
@@ -34,6 +33,11 @@ public class StickyNoteAdapter extends BaseAdapter {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.application = application;
         this.listNote = listNote;
+    }
+
+    public void setData(List<StickyNote> listNote) {
+        this.listNote = listNote;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -58,16 +62,16 @@ public class StickyNoteAdapter extends BaseAdapter {
         if (view == null) {
             holder = new ViewHolder();
             view = inflater.inflate(R.layout.item_note, null);
-            holder.imgPin = (ImageView) view.findViewById(R.id.imgPin);
             holder.tvEditor = (TextView) view.findViewById(R.id.tvEditor);
+            holder.frNote = (FrameLayout) view.findViewById(R.id.frNote);
+            holder.imgPin = (ImageView) view.findViewById(R.id.imgPin);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
         }
         StickyNote note = listNote.get(position);
-        holder.imgPin.setImageResource(application.listPin[note.getPin()]);
         holder.tvEditor.setText(note.getContent());
-        holder.tvEditor.setTextSize(application.textSize[note.getTextSize()]);
+        holder.tvEditor.setTextSize(application.textSize[note.getTextSize()/2]);
         if (note.getTextAlign() == 0) {
             holder.tvEditor.setGravity(Gravity.TOP | Gravity.LEFT);
         }
@@ -79,12 +83,15 @@ public class StickyNoteAdapter extends BaseAdapter {
         }
         holder.tvEditor.setTextColor(Color.parseColor(application.color[note.getTextColor()]));
         holder.tvEditor.setBackgroundResource(application.listBackground[note.getBackground()]);
+        holder.imgPin.setImageResource(application.listPin[note.getPin()]);
+        holder.frNote.setRotation(application.rotateDegrees[note.getRotate()]);
 
         return view;
     }
 
     class ViewHolder {
-        ImageView imgPin;
         TextView tvEditor;
+        FrameLayout frNote;
+        ImageView imgPin;
     }
 }

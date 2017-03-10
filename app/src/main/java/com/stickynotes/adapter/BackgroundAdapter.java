@@ -16,7 +16,7 @@ import com.stickynotes.R;
 public class BackgroundAdapter extends RecyclerView.Adapter<BackgroundAdapter.MyViewHolder> {
 
     private int[] listImage;
-    private int mSelectedItem ;
+    public int mSelectedItem ;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView imgBackground, imgTick;
@@ -30,6 +30,11 @@ public class BackgroundAdapter extends RecyclerView.Adapter<BackgroundAdapter.My
 
     public BackgroundAdapter(int[] listImage) {
         this.listImage = listImage;
+    }
+
+    public void setSelectedItem(int mSelectedItem){
+        this.mSelectedItem = mSelectedItem;
+        notifyDataSetChanged();
     }
 
     @Override
