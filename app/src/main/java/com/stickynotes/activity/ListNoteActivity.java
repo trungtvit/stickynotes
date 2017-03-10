@@ -64,6 +64,8 @@ public class ListNoteActivity extends AppCompatActivity {
         grvNote = (GridView) findViewById(R.id.grvNote);
         imgAddNote = (ImageView) findViewById(R.id.imgAddNote);
 
+        imgAddNote.setVisibility(View.VISIBLE);
+
         imgAddNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
