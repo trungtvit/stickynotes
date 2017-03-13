@@ -3,16 +3,11 @@ package com.stickynotes.activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.GridView;
 
 import com.stickynotes.R;
@@ -29,21 +24,13 @@ import java.util.List;
  */
 
 public class ListNoteWidgetActivity extends AppCompatActivity {
-    int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-    private static final String PREFS_NAME = "AppWidget";
-    private static final String PREF_PREFIX_KEY = "appwidget";
 
-    private CommonApplication application;
+    public static CommonApplication application;
     private StickyNoteAdapter adapter;
     private DatabaseHandler db;
     private List<StickyNote> listNote;
 
-    public static int _id;
-    public static String content = "";
-    public static float textSize ;
-    public static String textColor="#000000";
-    public static int pin=0;
-    public static int background=0;
+    private int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
     private GridView grvNote;
 
@@ -54,6 +41,18 @@ public class ListNoteWidgetActivity extends AppCompatActivity {
         setResult(RESULT_CANCELED);
         setContentView(R.layout.activity_list_note);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            mAppWidgetId = extras.getInt(
+                    AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        }
+
+        if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            finish();
+            return;
+        }
 
         application = (CommonApplication) getApplication();
         db = new DatabaseHandler(this);
@@ -67,27 +66,10 @@ public class ListNoteWidgetActivity extends AppCompatActivity {
         grvNote.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                _id = listNote.get(position).getId();
-                content = listNote.get(position).getContent();
-                textSize = application.textSize[listNote.get(position).getTextSize()];
-                textColor = application.color[listNote.get(position).getTextColor()];
-                pin = application.listPin[listNote.get(position).getPin()];
-                background = application.listBackground[listNote.get(position).getBackground()];
+                db.updateWidgetId(mAppWidgetId,listNote.get(position).getId());
                 createWidget(getApplicationContext());
             }
         });
-
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            mAppWidgetId = extras.getInt(
-                    AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-        }
-
-        if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-            finish();
-            return;
-        }
 
     }
 

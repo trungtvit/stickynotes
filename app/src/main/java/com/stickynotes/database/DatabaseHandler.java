@@ -24,6 +24,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String TABLE_STICKY_NOTE = "sticky_note";
 
     private static final String KEY_ID = "_id";
+    private static final String KEY_WIDGET_ID = "widget_id";
     private static final String KEY_CONTENT = "content";
     private static final String KEY_TEXT_SIZE = "text_size";
     private static final String KEY_TEXT_ALIGN = "text_align";
@@ -34,6 +35,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_STICKY_NOTE = "CREATE TABLE " + TABLE_STICKY_NOTE + "("
             + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_WIDGET_ID + " INTEGER, "
             + KEY_CONTENT + " TEXT ,"
             + KEY_TEXT_SIZE + " INTEGER,"
             + KEY_TEXT_ALIGN + " INTEGER,"
@@ -71,6 +73,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(KEY_WIDGET_ID, note.getWidgetId());
         values.put(KEY_CONTENT, note.getContent());
         values.put(KEY_TEXT_SIZE, note.getTextSize());
         values.put(KEY_TEXT_ALIGN, note.getTextAlign());
@@ -96,6 +99,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             do {
                 StickyNote note = new StickyNote();
                 note.setId(c.getInt((c.getColumnIndex(KEY_ID))));
+                note.setWidgetId(c.getInt((c.getColumnIndex(KEY_WIDGET_ID))));
                 note.setContent(c.getString((c.getColumnIndex(KEY_CONTENT))));
                 note.setTextSize(c.getInt((c.getColumnIndex(KEY_TEXT_SIZE))));
                 note.setTextAlign(c.getInt((c.getColumnIndex(KEY_TEXT_ALIGN))));
@@ -120,6 +124,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (c.moveToFirst()) {
             note = new StickyNote();
             note.setId(c.getInt((c.getColumnIndex(KEY_ID))));
+            note.setWidgetId(c.getInt((c.getColumnIndex(KEY_WIDGET_ID))));
+            note.setContent(c.getString((c.getColumnIndex(KEY_CONTENT))));
+            note.setTextSize(c.getInt((c.getColumnIndex(KEY_TEXT_SIZE))));
+            note.setTextAlign(c.getInt((c.getColumnIndex(KEY_TEXT_ALIGN))));
+            note.setTextColor(c.getInt((c.getColumnIndex(KEY_TEXT_COLOR))));
+            note.setRotate(c.getInt((c.getColumnIndex(KEY_ROTATE))));
+            note.setBackground(c.getInt((c.getColumnIndex(KEY_BACKGROUND))));
+            note.setPin(c.getInt((c.getColumnIndex(KEY_PIN))));
+        }
+        return note;
+    }
+
+    /*Get note by widgetId*/
+    public StickyNote getNoteByWidgetId(int widgetId) {
+        String selectQuery = "SELECT  * FROM " + TABLE_STICKY_NOTE + " WHERE " + KEY_WIDGET_ID + " = " + "'" + widgetId + "'";
+        StickyNote note = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c.moveToFirst()) {
+            note = new StickyNote();
+            note.setId(c.getInt((c.getColumnIndex(KEY_ID))));
+            note.setWidgetId(c.getInt((c.getColumnIndex(KEY_WIDGET_ID))));
             note.setContent(c.getString((c.getColumnIndex(KEY_CONTENT))));
             note.setTextSize(c.getInt((c.getColumnIndex(KEY_TEXT_SIZE))));
             note.setTextAlign(c.getInt((c.getColumnIndex(KEY_TEXT_ALIGN))));
@@ -143,6 +170,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_ROTATE, note.getRotate());
         values.put(KEY_BACKGROUND, note.getBackground());
         values.put(KEY_PIN, note.getPin());
+
+        return db.update(TABLE_STICKY_NOTE, values, KEY_ID + " = ?",
+                new String[]{String.valueOf(id)});
+    }
+
+    /*Update note by id*/
+    public int updateWidgetId(int widgetId, int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_WIDGET_ID, widgetId);
 
         return db.update(TABLE_STICKY_NOTE, values, KEY_ID + " = ?",
                 new String[]{String.valueOf(id)});

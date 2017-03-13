@@ -1,5 +1,6 @@
 package com.stickynotes.activity;
 
+import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.stickynotes.application.CommonApplication;
 import com.stickynotes.database.DatabaseHandler;
 import com.stickynotes.model.RecyclerTouchListener;
 import com.stickynotes.model.StickyNote;
+import com.stickynotes.widget.NoteWidget;
 
 /**
  * Created by TrungTV on 03/09/2017.
@@ -50,6 +52,7 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
 
 
     private int id = -1;
+    private int appWidgetId;
     private int textSizePosition = 0;
     private int alignPosition = 0;
     private int colorPosition = 0;
@@ -70,6 +73,7 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
         backgroundAdapter = new BackgroundAdapter(application.listBackground);
 
         id = getIntent().getIntExtra("ID", -1);
+        appWidgetId = getIntent().getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
 
         initUI();
 
@@ -205,7 +209,9 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
                 } else {
                     updateNote();
                     Toast.makeText(this, getResources().getString(R.string.msg_update_complete), Toast.LENGTH_SHORT).show();
+                    updateAllWidgets();
                 }
+
                 finish();
                 break;
             default:
@@ -223,6 +229,14 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void updateAllWidgets() {
+        Intent intent = new Intent(this, NoteWidget.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int[] ids = {appWidgetId};
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        sendBroadcast(intent);
     }
 
     /*Show detail note*/
@@ -276,11 +290,14 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
         note.setBackground(backgroundPosition);
         note.setPin(pinPosition);
         db.addNote(note);
+        Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
     }
 
     /*Update note*/
     private void updateNote() {
         StickyNote note = new StickyNote();
+        note.setWidgetId(appWidgetId);
         note.setContent(edtEditor.getText().toString());
         note.setTextSize(textSizePosition);
         note.setTextAlign(alignPosition);

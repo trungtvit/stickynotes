@@ -23,6 +23,7 @@ import java.util.List;
 public class ListNoteActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_UPDATE = 101;
+    private static final int REQUEST_CODE_ADD = 102;
 
     private CommonApplication application;
     private StickyNoteAdapter adapter;
@@ -33,6 +34,7 @@ public class ListNoteActivity extends AppCompatActivity {
     private ImageView imgAddNote;
 
     private boolean isUpdate = false;
+    private boolean isAdd = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +72,7 @@ public class ListNoteActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ListNoteActivity.this, DetailNoteActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE_ADD);
             }
         });
 
@@ -84,15 +86,22 @@ public class ListNoteActivity extends AppCompatActivity {
                 isUpdate = true;
             }
         }
+
+        if (requestCode == REQUEST_CODE_ADD) {
+            if (resultCode == RESULT_OK) {
+                isAdd = true;
+            }
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (isUpdate) {
+        if (isUpdate || isAdd) {
             listNote = db.getAllNote();
             adapter.setData(listNote);
             isUpdate = false;
+            isAdd = false;
         }
     }
 }

@@ -6,6 +6,7 @@ package com.stickynotes.model;
 
 public class StickyNote {
     private int id;
+    private int widgetId;
     private String content;
     private int textSize;
     private int textAlign;
@@ -23,6 +24,14 @@ public class StickyNote {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getWidgetId() {
+        return widgetId;
+    }
+
+    public void setWidgetId(int widgetId) {
+        this.widgetId = widgetId;
     }
 
     public String getContent() {
