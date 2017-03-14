@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.stickynotes.R;
 import com.stickynotes.adapter.BackgroundAdapter;
+import com.stickynotes.adapter.PinAdapter;
 import com.stickynotes.application.CommonApplication;
 import com.stickynotes.database.DatabaseHandler;
 import com.stickynotes.model.RecyclerTouchListener;
@@ -32,10 +33,8 @@ import com.stickynotes.widget.NoteWidget;
 
 public class DetailNoteActivity extends AppCompatActivity implements View.OnClickListener {
     private RecyclerView rcvBackground;
+    private RecyclerView rcvPin;
     private EditText edtEditor;
-    private ImageView imgPinNone;
-    private ImageView imgPinBlue;
-    private ImageView imgPinYellow;
     private ImageView imgPin;
     private ImageView imgEditor;
     private ImageView imgAlign;
@@ -47,6 +46,7 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
     private LinearLayout lnRotate;
 
     private BackgroundAdapter backgroundAdapter;
+    private PinAdapter pinAdapter;
     private DatabaseHandler db;
     private CommonApplication application;
 
@@ -57,7 +57,7 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
     private int alignPosition = 0;
     private int colorPosition = 0;
     private int degreesPosition = 0;
-    private int pinPosition = 1;
+    private int pinPosition = 0;
     private int backgroundPosition = 0;
     private String contentNote = "";
 
@@ -71,6 +71,7 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
         application = (CommonApplication) getApplication();
         db = new DatabaseHandler(this);
         backgroundAdapter = new BackgroundAdapter(application.listBackground);
+        pinAdapter = new PinAdapter(application.listPin);
 
         id = getIntent().getIntExtra("ID", -1);
         appWidgetId = getIntent().getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
@@ -99,14 +100,34 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
 
             }
         }));
+
+        RecyclerView.LayoutManager mLayoutManagerPin = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        rcvPin.setLayoutManager(mLayoutManagerPin);
+        rcvPin.setItemAnimator(new DefaultItemAnimator());
+        rcvPin.setAdapter(pinAdapter);
+        rcvPin.scrollToPosition(pinPosition);
+
+        rcvPin.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), rcvPin, new RecyclerTouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                pinPosition = position;
+                imgPin.setImageResource(application.listPin[position]);
+                if (pinPosition == 0) {
+                    imgPin.setImageResource(0);
+                }
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
     }
 
     private void initUI() {
         rcvBackground = (RecyclerView) findViewById(R.id.rcvBackground);
+        rcvPin = (RecyclerView) findViewById(R.id.rcvPin);
         edtEditor = (EditText) findViewById(R.id.edtEditor);
-        imgPinNone = (ImageView) findViewById(R.id.imgPinNone);
-        imgPinBlue = (ImageView) findViewById(R.id.imgPinBlue);
-        imgPinYellow = (ImageView) findViewById(R.id.imgPinYellow);
         imgPin = (ImageView) findViewById(R.id.imgPin);
         imgEditor = (ImageView) findViewById(R.id.imgEditor);
         imgAlign = (ImageView) findViewById(R.id.imgAlign);
@@ -122,9 +143,6 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
         imgTextColor.setImageResource(application.listColor[colorPosition]);
         lnRotate.setRotation(application.rotateDegrees[degreesPosition]);
 
-        imgPinNone.setOnClickListener(this);
-        imgPinBlue.setOnClickListener(this);
-        imgPinYellow.setOnClickListener(this);
         imgEditor.setOnClickListener(this);
         imgAlign.setOnClickListener(this);
         imgTextSize.setOnClickListener(this);
@@ -136,18 +154,6 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.imgPinNone:
-                imgPin.setImageBitmap(null);
-                pinPosition = 0;
-                break;
-            case R.id.imgPinBlue:
-                imgPin.setImageResource(R.drawable.holder_2);
-                pinPosition = 1;
-                break;
-            case R.id.imgPinYellow:
-                imgPin.setImageResource(R.drawable.holder_3);
-                pinPosition = 2;
-                break;
             case R.id.imgEditor:
                 if (lnEditor.isShown()) {
                     Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(this, R.anim.anim_out_left);
@@ -253,6 +259,9 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
         edtEditor.setText(contentNote);
 
         imgPin.setImageResource(application.listPin[pinPosition]);
+        if (pinPosition == 0) {
+            imgPin.setImageResource(0);
+        }
 
         edtEditor.setTextSize(application.textSize[textSizePosition]);
         imgTextSize.setImageResource(application.listTextSize[textSizePosition]);

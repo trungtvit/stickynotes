@@ -9,34 +9,13 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rcvPin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/imgPinNone"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginLeft="15dp"
-                android:src="@drawable/holder_1" />
-
-            <ImageView
-                android:id="@+id/imgPinBlue"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginLeft="15dp"
-                android:src="@drawable/holder_2" />
-
-            <ImageView
-                android:id="@+id/imgPinYellow"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginLeft="15dp"
-                android:src="@drawable/holder_3" />
-        </LinearLayout>
-
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp" />
 
         <LinearLayout
             android:id="@+id/lnRotate"
@@ -64,9 +43,9 @@
                 <ImageView
                     android:id="@+id/imgPin"
                     android:layout_width="60dp"
+                    android:padding="10dp"
                     android:layout_height="60dp"
-                    android:layout_gravity="top|center"
-                    android:src="@drawable/holder_2" />
+                    android:layout_gravity="top|center" />
 
                 <LinearLayout
                     android:id="@+id/lnEditor"

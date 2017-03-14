@@ -27,7 +27,7 @@ public class StickyNoteAdapter extends BaseAdapter {
     private static LayoutInflater inflater = null;
     private List<StickyNote> listNote;
 
-    public StickyNoteAdapter(CommonApplication application,Context context, List<StickyNote> listNote) {
+    public StickyNoteAdapter(CommonApplication application, Context context, List<StickyNote> listNote) {
         this.context = context;
         inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -71,7 +71,7 @@ public class StickyNoteAdapter extends BaseAdapter {
         }
         StickyNote note = listNote.get(position);
         holder.tvEditor.setText(note.getContent());
-        holder.tvEditor.setTextSize(application.textSize[note.getTextSize()/2]);
+        holder.tvEditor.setTextSize(application.textSize[note.getTextSize() / 2]);
         if (note.getTextAlign() == 0) {
             holder.tvEditor.setGravity(Gravity.TOP | Gravity.LEFT);
         }
@@ -84,6 +84,9 @@ public class StickyNoteAdapter extends BaseAdapter {
         holder.tvEditor.setTextColor(Color.parseColor(application.color[note.getTextColor()]));
         holder.tvEditor.setBackgroundResource(application.listBackground[note.getBackground()]);
         holder.imgPin.setImageResource(application.listPin[note.getPin()]);
+        if (note.getPin() == 0) {
+            holder.imgPin.setImageResource(0);
+        }
         holder.frNote.setRotation(application.rotateDegrees[note.getRotate()]);
 
         return view;
