@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
 
 import com.stickynotes.model.StickyNote;
 
@@ -187,10 +188,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     /*Delete note*/
-    public void deleteNote(int id) {
+    public void deleteNote(String[] ids) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_STICKY_NOTE, KEY_ID + " = ?",
-                new String[]{String.valueOf(id)});
+        String args = TextUtils.join(", ", ids);
+        db.execSQL(String.format("DELETE FROM " + TABLE_STICKY_NOTE + " WHERE " + KEY_ID + " IN (%s);", args));
         db.close();
     }
+
+
 }

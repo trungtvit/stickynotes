@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import com.stickynotes.R;
@@ -43,6 +44,11 @@ public class NoteWidget extends AppWidgetProvider {
         }
     }
 
+    @Override
+    public void onDeleted(Context context, int[] appWidgetIds) {
+        super.onDeleted(context, appWidgetIds);
+    }
+
     public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                        int appWidgetId) {
         DatabaseHandler db = new DatabaseHandler(context);
@@ -56,13 +62,38 @@ public class NoteWidget extends AppWidgetProvider {
             String textColor = application.color[note.getTextColor()];
             int pin = application.listPin[note.getPin()];
             int background = application.listBackground[note.getBackground()];
-
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.item_note_widget);
-            views.setTextViewText(R.id.tvEditor, content);
-            views.setTextViewTextSize(R.id.tvEditor, TypedValue.COMPLEX_UNIT_SP, textSize);
-            views.setTextColor(R.id.tvEditor, Color.parseColor(textColor));
+            int gravity = application.align[note.getTextAlign()];
+            float rotate = application.rotateDegrees[note.getRotate()];
+            RemoteViews views = null;
+            if (rotate == 0) {
+                views = new RemoteViews(context.getPackageName(), R.layout.item_note_widget_center);
+            } else if (rotate == 10) {
+                views = new RemoteViews(context.getPackageName(), R.layout.item_note_widget_left);
+            } else if (rotate == -10) {
+                views = new RemoteViews(context.getPackageName(), R.layout.item_note_widget_right);
+            }
+            int res = 0;
+            if (gravity == 0) {
+                views.setViewVisibility(R.id.tvEditorLeft, View.VISIBLE);
+                views.setViewVisibility(R.id.tvEditorCenter, View.GONE);
+                views.setViewVisibility(R.id.tvEditorRight, View.GONE);
+                res = R.id.tvEditorLeft;
+            } else if (gravity == 1) {
+                views.setViewVisibility(R.id.tvEditorLeft, View.GONE);
+                views.setViewVisibility(R.id.tvEditorCenter, View.VISIBLE);
+                views.setViewVisibility(R.id.tvEditorRight, View.GONE);
+                res = R.id.tvEditorCenter;
+            } else if (gravity == 2) {
+                views.setViewVisibility(R.id.tvEditorLeft, View.GONE);
+                views.setViewVisibility(R.id.tvEditorCenter, View.GONE);
+                views.setViewVisibility(R.id.tvEditorRight, View.VISIBLE);
+                res = R.id.tvEditorRight;
+            }
+            views.setTextViewText(res, content);
+            views.setTextViewTextSize(res, TypedValue.COMPLEX_UNIT_SP, textSize);
+            views.setInt(res, "setBackgroundResource", background);
+            views.setTextColor(res, Color.parseColor(textColor));
             views.setImageViewResource(R.id.imgPin, pin);
-            views.setImageViewResource(R.id.imgBackground, background);
 
             Intent intent = new Intent(context, DetailNoteActivity.class);
             intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);

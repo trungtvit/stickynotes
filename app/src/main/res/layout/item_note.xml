@@ -12,15 +12,21 @@
         <TextView
             android:id="@+id/tvEditor"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:layout_marginTop="20dp"
+            android:layout_height="170dp"
+            android:layout_margin="20dp"
             android:background="@drawable/bg_2" />
 
         <ImageView
             android:id="@+id/imgPin"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_gravity="center|top"
-            android:layout_marginTop="15dp" />
+            android:layout_gravity="center|top" />
+        <ImageView
+            android:id="@+id/imgSelected"
+            android:layout_width="40dp"
+            android:src="@drawable/selected"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_height="40dp" />
     </FrameLayout>
 </LinearLayout>

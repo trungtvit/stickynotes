@@ -2,6 +2,7 @@ package com.stickynotes.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,9 +27,11 @@ public class StickyNoteAdapter extends BaseAdapter {
     private Context context;
     private static LayoutInflater inflater = null;
     private List<StickyNote> listNote;
+    private SparseBooleanArray mSelectedItemsIds;
 
     public StickyNoteAdapter(CommonApplication application, Context context, List<StickyNote> listNote) {
         this.context = context;
+        mSelectedItemsIds = new SparseBooleanArray();
         inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.application = application;
@@ -37,6 +40,32 @@ public class StickyNoteAdapter extends BaseAdapter {
 
     public void setData(List<StickyNote> listNote) {
         this.listNote = listNote;
+        notifyDataSetChanged();
+    }
+
+    public void toggleSelection(int position) {
+        selectView(position, !mSelectedItemsIds.get(position));
+    }
+
+    public void selectView(int position, boolean value) {
+        if (value)
+            mSelectedItemsIds.put(position, value);
+        else
+            mSelectedItemsIds.delete(position);
+        notifyDataSetChanged();
+    }
+
+    public void removeSelection() {
+        mSelectedItemsIds = new SparseBooleanArray();
+        notifyDataSetChanged();
+    }
+
+    public SparseBooleanArray getSelectedIds() {
+        return mSelectedItemsIds;
+    }
+
+    public void remove(StickyNote note) {
+        listNote.remove(note);
         notifyDataSetChanged();
     }
 
@@ -56,8 +85,8 @@ public class StickyNoteAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        final ViewHolder holder;
         View view = convertView;
         if (view == null) {
             holder = new ViewHolder();
@@ -65,6 +94,7 @@ public class StickyNoteAdapter extends BaseAdapter {
             holder.tvEditor = (TextView) view.findViewById(R.id.tvEditor);
             holder.frNote = (FrameLayout) view.findViewById(R.id.frNote);
             holder.imgPin = (ImageView) view.findViewById(R.id.imgPin);
+            holder.imgSelected = (ImageView) view.findViewById(R.id.imgSelected);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -88,6 +118,7 @@ public class StickyNoteAdapter extends BaseAdapter {
             holder.imgPin.setImageResource(0);
         }
         holder.frNote.setRotation(application.rotateDegrees[note.getRotate()]);
+        holder.imgSelected.setVisibility(mSelectedItemsIds.get(position) ? View.VISIBLE : View.GONE);
 
         return view;
     }
@@ -96,5 +127,6 @@ public class StickyNoteAdapter extends BaseAdapter {
         TextView tvEditor;
         FrameLayout frNote;
         ImageView imgPin;
+        ImageView imgSelected;
     }
 }

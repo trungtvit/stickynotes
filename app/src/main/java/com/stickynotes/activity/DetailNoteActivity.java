@@ -1,9 +1,11 @@
 package com.stickynotes.activity;
 
 import android.appwidget.AppWidgetManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,14 +38,15 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
     private RecyclerView rcvPin;
     private EditText edtEditor;
     private ImageView imgPin;
-    private ImageView imgEditor;
     private ImageView imgAlign;
     private ImageView imgTextSize;
     private ImageView imgTextColor;
     private ImageView imgRotate;
-    private ImageView imgSave;
     private LinearLayout lnEditor;
+    private LinearLayout lnMainEditor;
+    private LinearLayout lnSave;
     private LinearLayout lnRotate;
+    private LinearLayout lnFont;
 
     private BackgroundAdapter backgroundAdapter;
     private PinAdapter pinAdapter;
@@ -129,32 +132,33 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
         rcvPin = (RecyclerView) findViewById(R.id.rcvPin);
         edtEditor = (EditText) findViewById(R.id.edtEditor);
         imgPin = (ImageView) findViewById(R.id.imgPin);
-        imgEditor = (ImageView) findViewById(R.id.imgEditor);
         imgAlign = (ImageView) findViewById(R.id.imgAlign);
         imgTextSize = (ImageView) findViewById(R.id.imgTextSize);
         imgTextColor = (ImageView) findViewById(R.id.imgTextColor);
         imgRotate = (ImageView) findViewById(R.id.imgRotate);
-        imgSave = (ImageView) findViewById(R.id.imgSave);
         lnEditor = (LinearLayout) findViewById(R.id.lnEditor);
+        lnMainEditor = (LinearLayout) findViewById(R.id.lnMainEditor);
+        lnFont = (LinearLayout) findViewById(R.id.lnFont);
+        lnSave = (LinearLayout) findViewById(R.id.lnSave);
         lnRotate = (LinearLayout) findViewById(R.id.lnRotate);
 
         imgTextSize.setImageResource(application.listTextSize[textSizePosition]);
         imgAlign.setImageResource(application.listAlign[alignPosition]);
         imgTextColor.setImageResource(application.listColor[colorPosition]);
-        lnRotate.setRotation(application.rotateDegrees[degreesPosition]);
+        lnMainEditor.setRotation(application.rotateDegrees[degreesPosition]);
 
-        imgEditor.setOnClickListener(this);
         imgAlign.setOnClickListener(this);
         imgTextSize.setOnClickListener(this);
         imgTextColor.setOnClickListener(this);
-        imgRotate.setOnClickListener(this);
-        imgSave.setOnClickListener(this);
+        lnFont.setOnClickListener(this);
+        lnSave.setOnClickListener(this);
+        lnRotate.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.imgEditor:
+            case R.id.lnFont:
                 if (lnEditor.isShown()) {
                     Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(this, R.anim.anim_out_left);
                     lnEditor.startAnimation(hyperspaceJumpAnimation);
@@ -200,30 +204,43 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
                 imgTextColor.setImageResource(application.listColor[colorPosition]);
                 edtEditor.setTextColor(Color.parseColor(application.color[colorPosition]));
                 break;
-            case R.id.imgRotate:
+            case R.id.lnRotate:
                 degreesPosition += 1;
                 if (degreesPosition == 3) {
                     degreesPosition = 0;
                 }
-                lnRotate.setRotation(application.rotateDegrees[degreesPosition]);
+                lnMainEditor.setRotation(application.rotateDegrees[degreesPosition]);
                 imgRotate.setImageResource(application.rotate[degreesPosition]);
                 break;
-            case R.id.imgSave:
+            case R.id.lnSave:
                 if (id == -1) {
-                    addNote();
-                    Toast.makeText(this, getResources().getString(R.string.msg_add_complete), Toast.LENGTH_SHORT).show();
+                    if (edtEditor.getText().toString().equals("")) {
+                        Toast.makeText(this, getResources().getString(R.string.msg_edittext_empty), Toast.LENGTH_SHORT).show();
+                    } else {
+                        addNote();
+                        Toast.makeText(this, getResources().getString(R.string.msg_add_complete), Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
                 } else {
-                    updateNote();
-                    Toast.makeText(this, getResources().getString(R.string.msg_update_complete), Toast.LENGTH_SHORT).show();
-                    updateAllWidgets();
+                    if (edtEditor.getText().toString().equals("")) {
+                        Toast.makeText(this, getResources().getString(R.string.msg_edittext_empty), Toast.LENGTH_SHORT).show();
+                    } else {
+                        updateNote();
+                        Toast.makeText(this, getResources().getString(R.string.msg_update_complete), Toast.LENGTH_SHORT).show();
+                        updateAllWidgets();
+                        finish();
+                    }
                 }
-
-                finish();
                 break;
             default:
                 /*TODO*/
                 break;
         }
+    }
+
+    private void deleteImage() {
+
+
     }
 
     @Override
@@ -280,7 +297,7 @@ public class DetailNoteActivity extends AppCompatActivity implements View.OnClic
         imgTextColor.setImageResource(application.listColor[colorPosition]);
         edtEditor.setTextColor(Color.parseColor(application.color[colorPosition]));
 
-        lnRotate.setRotation(application.rotateDegrees[degreesPosition]);
+        lnMainEditor.setRotation(application.rotateDegrees[degreesPosition]);
         imgRotate.setImageResource(application.rotate[degreesPosition]);
 
         edtEditor.setBackgroundResource(application.listBackground[backgroundPosition]);

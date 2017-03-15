@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
@@ -40,7 +39,7 @@ public class ListNoteWidgetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setResult(RESULT_CANCELED);
         setContentView(R.layout.activity_list_note);
-        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        getSupportActionBar().setTitle(getResources().getString(R.string.list_note_title));
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -66,7 +65,7 @@ public class ListNoteWidgetActivity extends AppCompatActivity {
         grvNote.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                db.updateWidgetId(mAppWidgetId,listNote.get(position).getId());
+                db.updateWidgetId(mAppWidgetId, listNote.get(position).getId());
                 createWidget(getApplicationContext());
             }
         });

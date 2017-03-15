@@ -17,6 +17,7 @@ public class CommonApplication extends Application {
             R.drawable.holder_10,R.drawable.holder_11,R.drawable.holder_12,R.drawable.holder_13,R.drawable.holder_14,R.drawable.holder_15,R.drawable.holder_16,R.drawable.holder_17,R.drawable.holder_18};
     public static final String[] color = new String[]{"#000000", "#0037A8", "#2D7D32", "#FF0032", "#FFCC00", "#FFFFFF"};
     public static final int[] textSize = new int[]{26, 30, 10, 14, 18};
+    public static final int[] align = new int[]{0,1,2};
     public static final int[] rotate = new int[]{R.drawable.angle_left, R.drawable.angle_right, R.drawable.angle_center};
     public static final float[] rotateDegrees = new float[]{0, 10, -10};
 }

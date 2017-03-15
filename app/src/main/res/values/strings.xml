@@ -4,4 +4,9 @@
     <string name="list_note_title">Danh sách ghi chú</string>
     <string name="msg_add_complete">Đã lưu thành công</string>
     <string name="msg_update_complete">Đã cập nhật thành công</string>
+    <string name="msg_edittext_empty">Ghi chú không được trống</string>
+    <string name="yes">Có</string>
+    <string name="no">Không</string>
+    <string name="title_dialog_delete">Xác nhận xóa</string>
+    <string name="msg_dialog_delete">Bạn có muốn xóa không ?</string>
 </resources>
