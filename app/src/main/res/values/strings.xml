@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">StickyNotes</string>
+    <string name="app_name">Notepad</string>
     <string name="note_title">Ghi chú</string>
     <string name="list_note_title">Danh sách ghi chú</string>
     <string name="msg_add_complete">Đã lưu thành công</string>
