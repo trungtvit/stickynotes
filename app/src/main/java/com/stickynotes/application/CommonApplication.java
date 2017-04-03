@@ -10,7 +10,7 @@ import com.stickynotes.R;
 
 public class CommonApplication extends Application {
     public static final int[] listBackground = new int[]{R.drawable.bg_1, R.drawable.bg_2, R.drawable.bg_3, R.drawable.bg_4, R.drawable.bg_5, R.drawable.bg_6, R.drawable.bg_7, R.drawable.bg_8,
-            R.drawable.bg_9, R.drawable.bg_10, R.drawable.bg_11, R.drawable.bg_12, R.drawable.bg_13, R.drawable.bg_14, R.drawable.bg_15, R.drawable.bg_16, R.drawable.bg_17, R.drawable.bg_18};
+            R.drawable.bg_9, R.drawable.bg_10, R.drawable.bg_11, R.drawable.bg_12, R.drawable.bg_13, R.drawable.bg_14, R.drawable.bg_15, R.drawable.bg_16, R.drawable.bg_17, R.drawable.bg_18, R.drawable.bg_19, R.drawable.bg_20, R.drawable.bg_21, R.drawable.bg_22};
     public static final int[] listTextSize = new int[]{R.drawable.font_size_l, R.drawable.font_size_lt, R.drawable.font_size_st, R.drawable.font_size_s, R.drawable.font_size_m};
     public static final int[] listColor = new int[]{R.drawable.color_1, R.drawable.color_2, R.drawable.color_3, R.drawable.color_4, R.drawable.color_5, R.drawable.color_6};
     public static final int[] listAlign = new int[]{R.drawable.font_align_left, R.drawable.font_align_center, R.drawable.font_align_right};
